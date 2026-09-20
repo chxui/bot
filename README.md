@@ -1,6 +1,6 @@
-# ch-bot — CH Portfolio
+# bot — CH Portfolio
 
-Personal UI designer portfolio, published at https://i88022555-netizen.github.io/ch-bot/.
+Personal UI designer portfolio, published at https://chxui.github.io/bot/.
 
 ## Development
 
@@ -26,7 +26,7 @@ This is a standalone static React 19 + TypeScript + Vite 8 version. It reuses th
 - `app/globals.css`: styling
 - `src/main.tsx`: designer homepage entry
 - `public/`: images, QR code, animation and home-screen icons
-- `vite.config.ts`: `/ch-bot/` deployment base path
+- `vite.config.ts`: `/bot/` deployment base path
 - `.github/workflows/pages.yml`: automatic deployment
 
 If renaming the repository, update the Vite base path. Always use the asset helper for local image URLs so they work under the repository subpath.
