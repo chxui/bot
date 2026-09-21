@@ -14,7 +14,7 @@ main { overflow-x: clip; background: var(--ink); }
 .hero { height: 100svh; min-height: 360px; position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; isolation: isolate; }
 .nav-spacer { height: 88px; }
 .floating-header { position: absolute; inset: 0 0 auto; z-index: 100; transition: background .2s, box-shadow .2s; }
-.floating-header.is-scrolled { position: fixed; background: rgb(12 12 12 / .92); backdrop-filter: blur(18px); box-shadow: 0 1px 0 #ffffff20; }
+.floating-header.is-scrolled { position: fixed; background: rgb(12 12 12 / .92); backdrop-filter: blur(18px); }
 .floating-header .nav { padding: 14px clamp(16px, 3vw, 40px); min-height: 88px; }
 .menu-toggle { display: none; }
 #about, #services, #projects, #contact { scroll-margin-top: 104px; }
