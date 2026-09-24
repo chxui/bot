@@ -185,6 +185,57 @@ function TrackingEyes({ x, y }: { x: MotionValue<number>; y: MotionValue<number>
   </svg>;
 }
 
+const designerIconOutlines = [
+  "64,171 81,117 288,104 359,322 319,377 135,398 73,321",
+  "3,483 54,435 141,422 196,446 247,550 235,620 185,672 77,681 8,644",
+  "222,451 277,393 355,392 422,431 450,517 426,579 375,616 290,620 226,560",
+  "886,299 934,210 1065,202 1176,276 1186,351 1159,454 1084,496 978,483 895,420",
+  "1001,569 1061,478 1178,470 1254,535 1254,648 1223,721 1092,732 1010,670",
+  "1038,719 1137,710 1252,820 1252,980 1118,981 1038,866",
+  "945,981 1008,930 1148,930 1216,1002 1216,1115 1158,1184 1063,1198 942,1157 932,1072",
+];
+
+function DesignerPortrait({ x, y, eyeX, eyeY, label }: {
+  x: MotionValue<number>; y: MotionValue<number>;
+  eyeX: MotionValue<number>; eyeY: MotionValue<number>; label: string;
+}) {
+  const source = asset("ch-designer-skills-v3.png");
+  const iconX = useTransform(x, value => value * .3);
+  const iconY = useTransform(y, value => value * .55);
+  return <svg className="designer-portrait" viewBox="0 0 1254 1254" role="img" aria-label={label}>
+    <defs>
+      <mask id="designer-person-mask" maskUnits="userSpaceOnUse">
+        <rect width="1254" height="1254" fill="white" />
+        {designerIconOutlines.map((points, index) => <polygon key={index} points={points} fill="black" />)}
+        <polygon points="970,80 1008,25 1138,20 1196,57 1199,128 1188,190 1142,226 1071,237 1013,211 969,169 959,116" fill="black" />
+        <rect x="865" width="389" height="255" fill="black" />
+      </mask>
+      <mask id="designer-icons-mask" maskUnits="userSpaceOnUse">
+        <rect width="1254" height="1254" fill="black" />
+        {designerIconOutlines.map((points, index) => <polygon key={index} points={points} fill="white" />)}
+        <rect x="950" width="280" height="222" fill="black" />
+      </mask>
+      <clipPath id="designer-code-icon"><polygon points="970,80 1008,25 1138,20 1196,57 1199,128 1188,190 1142,226 1071,228 1021,207 977,166 968,116" /></clipPath>
+      <clipPath id="designer-eye-left"><path d="M 514 303 C 519 283 535 279 559 279 C 582 278 600 286 604 303 C 602 320 586 328 558 328 C 531 328 518 320 514 303 Z" /></clipPath>
+      <clipPath id="designer-eye-right"><path d="M 660 303 C 665 283 680 279 698 279 C 720 279 737 287 741 303 C 738 320 723 328 698 328 C 675 328 662 320 660 303 Z" /></clipPath>
+      <clipPath id="designer-iris-left"><circle cx="560" cy="298" r="25" /></clipPath>
+      <clipPath id="designer-iris-right"><circle cx="697" cy="298" r="25" /></clipPath>
+      <clipPath id="designer-sleeve-repair-right"><path d="M 918 838 C 1002 831 1055 868 1070 929 C 1076 987 1035 1042 943 1052 L 910 1006 Z" /></clipPath>
+      <radialGradient id="designer-eye-white"><stop stopColor="#faf8f3" /><stop offset=".78" stopColor="#f1e9e3" /><stop offset="1" stopColor="#bb9b94" /></radialGradient>
+    </defs>
+    <g clipPath="url(#designer-sleeve-repair-right)"><image href={source} width="1254" height="1254" transform="translate(72 0)" /></g>
+    <image href={source} width="1254" height="1254" mask="url(#designer-person-mask)" />
+    {(["left", "right"] as const).map(side => <g key={side} clipPath={`url(#designer-eye-${side})`}>
+      <ellipse cx={side === "left" ? 559 : 699} cy="302" rx="47" ry="28" fill="url(#designer-eye-white)" />
+      <motion.g style={{ x: eyeX, y: eyeY }}><g clipPath={`url(#designer-iris-${side})`}><image href={source} width="1254" height="1254" /></g></motion.g>
+    </g>)}
+    <motion.g className="designer-floating-icons" style={{ x: iconX, y: iconY }}>
+      <image href={source} width="1254" height="1254" mask="url(#designer-icons-mask)" />
+      <g transform="translate(-950 990)"><g clipPath="url(#designer-code-icon)"><image href={source} width="1254" height="1254" /></g></g>
+    </motion.g>
+  </svg>;
+}
+
 function HeroSection({ designer = false }: { designer?: boolean }) {
   const { t } = useLanguage();
   const reducedMotion = useReducedMotion();
@@ -205,8 +256,8 @@ function HeroSection({ designer = false }: { designer?: boolean }) {
     const ny = Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1));
     pointerX.set(nx * Math.min(96, bounds.width * .09));
     pointerY.set(ny * Math.min(36, bounds.height * .04));
-    eyeTargetX.set(nx * 25);
-    eyeTargetY.set(ny * 15);
+    eyeTargetX.set(nx * (designer ? 10 : 25));
+    eyeTargetY.set(ny * (designer ? 6 : 15));
   };
   useEffect(() => {
     const resetOnBlur = () => { pointerX.set(0); pointerY.set(0); eyeTargetX.set(0); eyeTargetY.set(0); };
@@ -218,14 +269,13 @@ function HeroSection({ designer = false }: { designer?: boolean }) {
     <div className="nav-spacer" aria-hidden="true" />
     <div className="hero-scene"><div className="hero-composition">
       <div className="hero-title-wrap"><h1 className="hero-heading hero-title">{t.hello}</h1></div>
-      <div className="hero-person-wrap"><motion.div className="hero-person-motion" style={{ x, y, rotate }}>
-        <img className="hero-portrait" src={asset(designer ? "ch-designer-skills-v3.png" : "jack-portrait.png")} width={designer ? 1254 : 1450} height={designer ? 1254 : 1570} fetchPriority="high" draggable={false} alt={designer ? t.portrait : t.originalPortrait} />
-        {designer && <svg className="designer-code-layer" viewBox="0 0 1254 1254" aria-hidden="true">
-          <defs><clipPath id="designer-code-icon"><polygon points="940,0 1254,0 1254,260 1170,250 950,205" /></clipPath></defs>
-          <g transform="translate(-950 990)"><g clipPath="url(#designer-code-icon)"><image href={asset("ch-designer-skills-v3.png")} width="1254" height="1254" /></g></g>
-        </svg>}
-        {!designer && <TrackingEyes x={eyeX} y={eyeY} />}
-      </motion.div></div>
+      <div className="hero-person-wrap">{designer
+        ? <DesignerPortrait x={x} y={y} eyeX={eyeX} eyeY={eyeY} label={t.portrait} />
+        : <motion.div className="hero-person-motion" style={{ x, y, rotate }}>
+          <img className="hero-portrait" src={asset("jack-portrait.png")} width={1450} height={1570} fetchPriority="high" draggable={false} alt={t.originalPortrait} />
+          <TrackingEyes x={eyeX} y={eyeY} />
+        </motion.div>}
+      </div>
     </div></div>
     <div className="hero-bottom"><FadeIn delay={.35} y={20}><p>{t.intro}</p></FadeIn><FadeIn delay={.5} y={20}><ContactButton /></FadeIn></div>
   </section>;
