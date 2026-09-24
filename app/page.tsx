@@ -4,6 +4,9 @@ import { ArrowUpRight, Copy, Check, Menu, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { createContext, useContext, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { PurplePortrait } from "./PurplePortrait";
+
+export type HeroVersion = "classic" | "purple" | "separated";
 
 type Language = "en" | "zh";
 const translations = {
@@ -236,7 +239,7 @@ function DesignerPortrait({ x, y, eyeX, eyeY, label }: {
   </svg>;
 }
 
-function HeroSection({ designer = false }: { designer?: boolean }) {
+function HeroSection({ designer = false, heroVersion = "classic" }: { designer?: boolean; heroVersion?: HeroVersion }) {
   const { t } = useLanguage();
   const reducedMotion = useReducedMotion();
   const pointerX = useMotionValue(0);
@@ -256,8 +259,10 @@ function HeroSection({ designer = false }: { designer?: boolean }) {
     const ny = Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1));
     pointerX.set(nx * Math.min(96, bounds.width * .09));
     pointerY.set(ny * Math.min(36, bounds.height * .04));
-    eyeTargetX.set(nx * (designer ? 10 : 25));
-    eyeTargetY.set(ny * (designer ? 6 : 15));
+    if (!designer || heroVersion === "separated") {
+      eyeTargetX.set(nx * (designer ? 10 : 25));
+      eyeTargetY.set(ny * (designer ? 6 : 15));
+    }
   };
   useEffect(() => {
     const resetOnBlur = () => { pointerX.set(0); pointerY.set(0); eyeTargetX.set(0); eyeTargetY.set(0); };
@@ -265,15 +270,21 @@ function HeroSection({ designer = false }: { designer?: boolean }) {
     window.addEventListener("blur", resetOnBlur);
     return () => window.removeEventListener("blur", resetOnBlur);
   }, [pointerX, pointerY, eyeTargetX, eyeTargetY, reducedMotion]);
-  return <section className={designer ? "hero hero-designer" : "hero"} id="top" onPointerMove={move} onPointerLeave={reset} onPointerCancel={reset}>
+  return <section className={designer ? `hero hero-designer hero-${heroVersion}` : "hero"} id="top" onPointerMove={move} onPointerLeave={reset} onPointerCancel={reset}>
     <div className="nav-spacer" aria-hidden="true" />
     <div className="hero-scene"><div className="hero-composition">
       <div className="hero-title-wrap"><h1 className="hero-heading hero-title">{t.hello}</h1></div>
-      <div className="hero-person-wrap">{designer
+      <div className="hero-person-wrap">{designer && heroVersion === "purple"
+        ? <PurplePortrait x={x} y={y} label={t.portrait} />
+        : designer && heroVersion === "separated"
         ? <DesignerPortrait x={x} y={y} eyeX={eyeX} eyeY={eyeY} label={t.portrait} />
         : <motion.div className="hero-person-motion" style={{ x, y, rotate }}>
-          <img className="hero-portrait" src={asset("jack-portrait.png")} width={1450} height={1570} fetchPriority="high" draggable={false} alt={t.originalPortrait} />
-          <TrackingEyes x={eyeX} y={eyeY} />
+          <img className="hero-portrait" src={asset(designer ? "ch-designer-skills-v3.png" : "jack-portrait.png")} width={designer ? 1254 : 1450} height={designer ? 1254 : 1570} fetchPriority="high" draggable={false} alt={designer ? t.portrait : t.originalPortrait} />
+          {designer && <svg className="designer-code-layer" viewBox="0 0 1254 1254" aria-hidden="true">
+            <defs><clipPath id="classic-code-icon"><polygon points="940,0 1254,0 1254,260 1170,250 950,205" /></clipPath></defs>
+            <g transform="translate(-950 990)"><g clipPath="url(#classic-code-icon)"><image href={asset("ch-designer-skills-v3.png")} width="1254" height="1254" /></g></g>
+          </svg>}
+          {!designer && <TrackingEyes x={eyeX} y={eyeY} />}
         </motion.div>}
       </div>
     </div></div>
@@ -341,7 +352,7 @@ function ProjectsSection() {
   return <section className="projects" id="projects"><FadeIn><h2 className="section-heading hero-heading">{t.projectTitle}</h2></FadeIn><div className="projects-list">{projects.map((project, index) => <ProjectCard project={project} index={index} key={project.name} />)}</div><div className="project-footer" id="contact"><span>{t.available}</span><ContactButton footer /></div></section>;
 }
 
-export function Portfolio({ designer = false }: { designer?: boolean }) {
+export function Portfolio({ designer = false, heroVersion = "classic" }: { designer?: boolean; heroVersion?: HeroVersion }) {
   const [language, setLanguageState] = useState<Language>("en");
   useEffect(() => {
     try { if (localStorage.getItem("ch-portfolio-language") === "zh") setLanguageState("zh"); } catch { /* Storage can be unavailable in private browsers. */ }
@@ -351,7 +362,7 @@ export function Portfolio({ designer = false }: { designer?: boolean }) {
     setLanguageState(value);
     try { localStorage.setItem("ch-portfolio-language", value); } catch { /* Switching still works without persistence. */ }
   };
-  return <LanguageContext.Provider value={{ language, setLanguage }}><main className={`locale-${language}`} lang={language === "zh" ? "zh-CN" : "en"}><FloatingNavigation /><HeroSection designer={designer} /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main></LanguageContext.Provider>;
+  return <LanguageContext.Provider value={{ language, setLanguage }}><main className={`locale-${language}`} lang={language === "zh" ? "zh-CN" : "en"}><FloatingNavigation /><HeroSection designer={designer} heroVersion={heroVersion} /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main></LanguageContext.Provider>;
 }
 
 export default function Home() {

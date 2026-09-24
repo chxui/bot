@@ -56,6 +56,29 @@ main { overflow-x: clip; background: var(--ink); }
 .hero-designer .hero-person-wrap { aspect-ratio: 1; }
 .designer-portrait { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; user-select: none; }
 .designer-floating-icons { will-change: transform; }
+.hero-classic .hero-portrait { clip-path: polygon(0 0, 74.9601% 0, 75.7576% 16.3477%, 93.3014% 19.9362%, 100% 20.7337%, 100% 100%, 0 100%); }
+.designer-code-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.purple-portrait { position: relative; width: 100%; height: 100%; }
+.purple-character { position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+.purple-skills { position: absolute; inset: 0; z-index: 3; }
+.purple-skill { position: absolute; width: 29%; aspect-ratio: 1; will-change: transform; }
+.purple-skill-art { width: 100%; height: 100%; background-size: 300% 200%; background-repeat: no-repeat; }
+.purple-skill-ps { left: -5%; top: 9%; }
+.purple-skill-ai { right: -5%; top: 15%; }
+.purple-skill-figma { left: -10%; top: 39%; }
+.purple-skill-chatgpt { right: -10%; top: 44%; }
+.purple-skill-code { left: -6%; top: 70%; }
+.purple-skill-ae { right: -6%; top: 74%; }
+@media (max-width: 639px) {
+  .hero-purple .hero-composition { --portrait-offset: min(7.5cqw, 20cqh); }
+  .purple-skill { width: 26%; }
+  .purple-skill-ps { left: -1%; top: 13%; }
+  .purple-skill-ai { right: -1%; top: 18%; }
+  .purple-skill-figma { left: -3%; top: 40%; }
+  .purple-skill-chatgpt { right: -3%; top: 46%; }
+  .purple-skill-code { left: -1%; top: 72%; }
+  .purple-skill-ae { right: -1%; top: 76%; }
+}
 @media (min-width: 1024px) and (min-aspect-ratio: 4/3) {
   .hero-designer .hero-composition { --portrait-offset: min(2cqw, 5cqh); height: 100cqh; }
 }

@@ -2,6 +2,15 @@
 
 Personal UI designer portfolio, published at https://chxui.github.io/bot/.
 
+## Preserved hero versions
+
+- Default / `?version=classic`: restored complete original character and its original mouse interaction; mobile menu alignment remains centered.
+- `?version=purple`: newly generated purple character with six independently moving skill icons. The character and eyes stay still.
+- `?version=separated`: preserved experimental version from commit `c29b692`.
+- Git backup branch: `codex/archive-hero-separated-c29b692`.
+
+New artwork and the built-in image generation prompts are documented in `docs/purple-hero-assets.md`.
+
 ## Development
 
 Requires Node.js 22.13+.
