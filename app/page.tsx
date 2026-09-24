@@ -279,10 +279,10 @@ function HeroSection({ designer = false, heroVersion = "classic" }: { designer?:
         : designer && heroVersion === "separated"
         ? <DesignerPortrait x={x} y={y} eyeX={eyeX} eyeY={eyeY} label={t.portrait} />
         : <motion.div className="hero-person-motion" style={{ x, y, rotate }}>
-          <img className="hero-portrait" src={asset(designer ? "ch-classic-purple.webp" : "jack-portrait.png")} width={designer ? 1254 : 1450} height={designer ? 1254 : 1570} fetchPriority="high" draggable={false} alt={designer ? t.portrait : t.originalPortrait} />
+          <img className="hero-portrait" src={asset(designer ? "ch-classic-purple-smile.webp" : "jack-portrait.png")} width={designer ? 1254 : 1450} height={designer ? 1254 : 1570} fetchPriority="high" draggable={false} alt={designer ? t.portrait : t.originalPortrait} />
           {designer && <svg className="designer-code-layer" viewBox="0 0 1254 1254" aria-hidden="true">
             <defs><clipPath id="classic-code-icon"><polygon points="940,0 1254,0 1254,260 1170,250 950,205" /></clipPath></defs>
-            <g transform="translate(-950 990)"><g clipPath="url(#classic-code-icon)"><image href={asset("ch-classic-purple.webp")} width="1254" height="1254" /></g></g>
+            <g transform="translate(-950 990)"><g clipPath="url(#classic-code-icon)"><image href={asset("ch-classic-purple-smile.webp")} width="1254" height="1254" /></g></g>
           </svg>}
           {!designer && <TrackingEyes x={eyeX} y={eyeY} />}
         </motion.div>}
