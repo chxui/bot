@@ -4,7 +4,7 @@ Personal UI designer portfolio, published at https://chxui.github.io/bot/.
 
 ## Preserved hero versions
 
-- Default / `?version=classic`: original character and mouse interaction, using the purple clothing / swatch artwork with a soft closed-lip smile (`ch-classic-purple-smile-v2.webp`); mobile menu alignment remains centered. The supplied PNG and previous artwork remain saved.
+- Default / `?version=classic`: purple character with the first closed-mouth smile restored (`ch-classic-purple-smile.webp`). Pointer movement adds gentle perspective yaw/pitch with limited translation; this is a 2D illustration, not a real 3D model. Touch and reduced-motion users see a stationary character. Mobile menu alignment remains centered; previous artwork remains saved.
 - `?version=purple`: newly generated purple character with six independently moving skill icons. The character and eyes stay still.
 - `?version=separated`: preserved experimental version from commit `c29b692`.
 - Git backup branch: `codex/archive-hero-separated-c29b692`.
