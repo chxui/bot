@@ -241,7 +241,7 @@ function DesignerPortrait({ x, y, eyeX, eyeY, label }: {
   </svg>;
 }
 
-function HeroSection({ designer = false, heroVersion = "model" }: { designer?: boolean; heroVersion?: HeroVersion }) {
+function HeroSection({ designer = false, heroVersion = "classic" }: { designer?: boolean; heroVersion?: HeroVersion }) {
   const { t } = useLanguage();
   const hero = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
@@ -250,10 +250,6 @@ function HeroSection({ designer = false, heroVersion = "model" }: { designer?: b
   const x = useSpring(pointerX, { stiffness: 110, damping: 22 });
   const y = useSpring(pointerY, { stiffness: 110, damping: 22 });
   const rotate = useTransform(x, [-96, 96], [-3, 3]);
-  const turnY = useTransform(x, [-96, 96], [-14, 14]);
-  const turnX = useTransform(y, [-36, 36], [8, -8]);
-  const driftX = useTransform(x, value => value * .3);
-  const driftY = useTransform(y, value => value * .25);
   const eyeTargetX = useMotionValue(0);
   const eyeTargetY = useMotionValue(0);
   const eyeX = useSpring(eyeTargetX, { stiffness: 220, damping: 25 });
@@ -295,7 +291,7 @@ function HeroSection({ designer = false, heroVersion = "model" }: { designer?: b
         ? <PurplePortrait x={x} y={y} label={t.portrait} />
         : designer && heroVersion === "separated"
         ? <DesignerPortrait x={x} y={y} eyeX={eyeX} eyeY={eyeY} label={t.portrait} />
-        : <motion.div className="hero-person-motion" style={designer ? { x: driftX, y: driftY, rotateX: turnX, rotateY: turnY } : { x, y, rotate }}>
+        : <motion.div className="hero-person-motion" style={{ x, y, rotate }}>
           <img className="hero-portrait" src={asset(designer ? "ch-classic-purple-smile.webp" : "jack-portrait.png")} width={designer ? 1254 : 1450} height={designer ? 1254 : 1570} fetchPriority="high" draggable={false} alt={designer ? t.portrait : t.originalPortrait} />
           {designer && <svg className="designer-code-layer" viewBox="0 0 1254 1254" aria-hidden="true">
             <defs><clipPath id="classic-code-icon"><polygon points="940,0 1254,0 1254,260 1170,250 950,205" /></clipPath></defs>
@@ -369,7 +365,7 @@ function ProjectsSection() {
   return <section className="projects" id="projects"><FadeIn><h2 className="section-heading hero-heading">{t.projectTitle}</h2></FadeIn><div className="projects-list">{projects.map((project, index) => <ProjectCard project={project} index={index} key={project.name} />)}</div><div className="project-footer" id="contact"><span>{t.available}</span><ContactButton footer /></div></section>;
 }
 
-export function Portfolio({ designer = false, heroVersion = "model" }: { designer?: boolean; heroVersion?: HeroVersion }) {
+export function Portfolio({ designer = false, heroVersion = "classic" }: { designer?: boolean; heroVersion?: HeroVersion }) {
   const [language, setLanguageState] = useState<Language>("en");
   useEffect(() => {
     try { if (localStorage.getItem("ch-portfolio-language") === "zh") setLanguageState("zh"); } catch { /* Storage can be unavailable in private browsers. */ }

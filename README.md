@@ -4,8 +4,8 @@ Personal UI designer portfolio, published at https://chxui.github.io/bot/.
 
 ## Preserved hero versions
 
-- Default / `?version=model`: procedural Three.js mesh portrait in the established purple outfit, with a closed-mouth smile, CH badge, laptop and floating skill icons. The portrait turns in real 3D in response to the mouse across the hero. Touch and reduced-motion users see a stationary model. The previous illustration is the fallback if WebGL is unavailable.
-- `?version=classic`: previous purple illustration and perspective interaction (`ch-classic-purple-smile.webp`).
+- Default / `?version=classic`: restored purple illustration (`ch-classic-purple-smile.webp`) with the original pointer translation and slight in-plane tilt. No perspective turning or 3D model is used on the default homepage.
+- `?version=model`: preserved experimental Three.js mesh portrait with pointer-controlled turning, CH badge, laptop and floating skill icons.
 - `?version=purple`: newly generated purple character with six independently moving skill icons. The character and eyes stay still.
 - `?version=separated`: preserved experimental version from commit `c29b692`.
 - Git backup branch: `codex/archive-hero-separated-c29b692`.
