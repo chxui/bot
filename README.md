@@ -4,7 +4,8 @@ Personal UI designer portfolio, published at https://chxui.github.io/bot/.
 
 ## Preserved hero versions
 
-- Default / `?version=classic`: purple character with the first closed-mouth smile restored (`ch-classic-purple-smile.webp`). Pointer movement adds gentle perspective yaw/pitch with limited translation; this is a 2D illustration, not a real 3D model. Touch and reduced-motion users see a stationary character. Mobile menu alignment remains centered; previous artwork remains saved.
+- Default / `?version=model`: procedural Three.js mesh portrait in the established purple outfit, with a closed-mouth smile, CH badge, laptop and floating skill icons. The portrait turns in real 3D in response to the mouse across the hero. Touch and reduced-motion users see a stationary model. The previous illustration is the fallback if WebGL is unavailable.
+- `?version=classic`: previous purple illustration and perspective interaction (`ch-classic-purple-smile.webp`).
 - `?version=purple`: newly generated purple character with six independently moving skill icons. The character and eyes stay still.
 - `?version=separated`: preserved experimental version from commit `c29b692`.
 - Git backup branch: `codex/archive-hero-separated-c29b692`.
@@ -29,7 +30,7 @@ npm run build
 npm run preview
 ```
 
-This is a standalone static React 19 + TypeScript + Vite 8 version. It reuses the original portfolio components, Tailwind CSS, Framer Motion animations, Lucide icons and optimized WebP assets. No Sites, Cloudflare, database or secret keys are needed. The original Sites deployment is separate and unchanged.
+This is a standalone static React 19 + TypeScript + Vite 8 version. The hero model is built with Three.js and React Three Fiber; the original portfolio also uses Tailwind CSS, Framer Motion, Lucide icons and optimized WebP assets. No Sites, Cloudflare, database or secret keys are needed. The original Sites deployment is separate and unchanged.
 
 - `app/page.tsx`: content and interactions
 - `app/globals.css`: styling

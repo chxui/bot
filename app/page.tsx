@@ -3,10 +3,12 @@
 import { ArrowUpRight, Copy, Check, Menu, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
-import { createContext, useContext, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { Suspense, createContext, lazy, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { PurplePortrait } from "./PurplePortrait";
 
-export type HeroVersion = "classic" | "purple" | "separated";
+const ThreePortrait = lazy(() => import("./ThreePortrait"));
+
+export type HeroVersion = "model" | "classic" | "purple" | "separated";
 
 type Language = "en" | "zh";
 const translations = {
@@ -239,8 +241,9 @@ function DesignerPortrait({ x, y, eyeX, eyeY, label }: {
   </svg>;
 }
 
-function HeroSection({ designer = false, heroVersion = "classic" }: { designer?: boolean; heroVersion?: HeroVersion }) {
+function HeroSection({ designer = false, heroVersion = "model" }: { designer?: boolean; heroVersion?: HeroVersion }) {
   const { t } = useLanguage();
+  const hero = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -256,9 +259,11 @@ function HeroSection({ designer = false, heroVersion = "classic" }: { designer?:
   const eyeX = useSpring(eyeTargetX, { stiffness: 220, damping: 25 });
   const eyeY = useSpring(eyeTargetY, { stiffness: 220, damping: 25 });
   const reset = () => { pointerX.set(0); pointerY.set(0); eyeTargetX.set(0); eyeTargetY.set(0); };
-  const move = (event: PointerEvent<HTMLElement>) => {
+  const move = (event: globalThis.PointerEvent) => {
     if (event.pointerType === "touch" || reducedMotion) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
+    const bounds = hero.current?.getBoundingClientRect();
+    if (!bounds) return;
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) { reset(); return; }
     const nx = Math.max(-1, Math.min(1, (event.clientX - bounds.left) / bounds.width * 2 - 1));
     const ny = Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1));
     pointerX.set(nx * Math.min(96, bounds.width * .09));
@@ -272,13 +277,21 @@ function HeroSection({ designer = false, heroVersion = "classic" }: { designer?:
     const resetOnBlur = () => { pointerX.set(0); pointerY.set(0); eyeTargetX.set(0); eyeTargetY.set(0); };
     if (reducedMotion) resetOnBlur();
     window.addEventListener("blur", resetOnBlur);
-    return () => window.removeEventListener("blur", resetOnBlur);
-  }, [pointerX, pointerY, eyeTargetX, eyeTargetY, reducedMotion]);
-  return <section className={designer ? `hero hero-designer hero-${heroVersion}` : "hero"} id="top" onPointerMove={move} onPointerLeave={reset} onPointerCancel={reset}>
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointercancel", resetOnBlur);
+    return () => {
+      window.removeEventListener("blur", resetOnBlur);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointercancel", resetOnBlur);
+    };
+  }, [pointerX, pointerY, eyeTargetX, eyeTargetY, reducedMotion, designer, heroVersion]);
+  return <section ref={hero} className={designer ? `hero hero-designer hero-${heroVersion}` : "hero"} id="top">
     <div className="nav-spacer" aria-hidden="true" />
     <div className="hero-scene"><div className="hero-composition">
       <div className="hero-title-wrap"><h1 className="hero-heading hero-title">{t.hello}</h1></div>
-      <div className="hero-person-wrap">{designer && heroVersion === "purple"
+      <div className="hero-person-wrap">{designer && heroVersion === "model"
+        ? <Suspense fallback={<img className="hero-portrait" src={asset("ch-classic-purple-smile.webp")} alt={t.portrait} />}><ThreePortrait x={x} y={y} label={t.portrait} reducedMotion={Boolean(reducedMotion)} /></Suspense>
+        : designer && heroVersion === "purple"
         ? <PurplePortrait x={x} y={y} label={t.portrait} />
         : designer && heroVersion === "separated"
         ? <DesignerPortrait x={x} y={y} eyeX={eyeX} eyeY={eyeY} label={t.portrait} />
@@ -356,7 +369,7 @@ function ProjectsSection() {
   return <section className="projects" id="projects"><FadeIn><h2 className="section-heading hero-heading">{t.projectTitle}</h2></FadeIn><div className="projects-list">{projects.map((project, index) => <ProjectCard project={project} index={index} key={project.name} />)}</div><div className="project-footer" id="contact"><span>{t.available}</span><ContactButton footer /></div></section>;
 }
 
-export function Portfolio({ designer = false, heroVersion = "classic" }: { designer?: boolean; heroVersion?: HeroVersion }) {
+export function Portfolio({ designer = false, heroVersion = "model" }: { designer?: boolean; heroVersion?: HeroVersion }) {
   const [language, setLanguageState] = useState<Language>("en");
   useEffect(() => {
     try { if (localStorage.getItem("ch-portfolio-language") === "zh") setLanguageState("zh"); } catch { /* Storage can be unavailable in private browsers. */ }
